@@ -1,2 +1,2 @@
 # Big-Data-Fabric-Platform
-Build Big Data Fabric Platform with Kubernetes
+Build Big Data Platform using Fabric Strategy
