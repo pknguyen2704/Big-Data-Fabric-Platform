@@ -1,0 +1,16 @@
+services:
+  jupyter:
+    build: 
+      context: .
+      dockerfile: ./docker/jupyter/Dockerfile
+    volumes:
+      - ./work:/home/jovyan/work
+    ports:
+      - 8888:8888
+    networks:
+      - bdfp-net
+    command: "start-notebook.sh --NotebookApp.token="
+
+networks:
+  bdfp-net:
+    external: true
