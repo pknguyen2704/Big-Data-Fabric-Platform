@@ -1,6 +1,6 @@
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.2
+    image: confluentinc/cp-zookeeper:7.9.5
     hostname: zookeeper
     container_name: zookeeper
     environment:
@@ -11,7 +11,7 @@ services:
       - bdfp-net
 
   kafka:
-    image: confluentinc/cp-kafka:7.3.2
+    image: confluentinc/cp-kafka:7.9.5
     hostname: kafka
     container_name: kafka
     ports:
@@ -30,7 +30,7 @@ services:
       - bdfp-net
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.3.2
+    image: confluentinc/cp-schema-registry:7.9.5
     hostname: schema-registry
     container_name: schema-registry
     ports:
@@ -41,6 +41,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:29092"
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
       TZ: Asia/Ho_Chi_Minh
+
     networks:
       - bdfp-net
 
