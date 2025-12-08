@@ -1,0 +1,15 @@
+python smart_band/smart_band_send.py \
+  --patient_file patients_seed_last_5000.csv \
+  --mode history \
+  --start 2025-12-09 \
+  --end 2025-12-09 \
+  --interval 15 \
+  --dirty_rate 0.01
+
+python3 smart_band/smart_band_send.py \
+  --patient_file patients_seed_last_5000.csv \
+  --mode realtime \
+  --date 2024-01-20 \
+  --interval 5 \
+  --delay 0.1 \
+  --dirty_rate 0.05

@@ -1,0 +1,30 @@
+{
+  "tableName": "smart_band",
+  "schemaName": "public",
+  "topicName": "smart_band",
+
+  "key": {
+    "dataFormat": "raw",
+    "fields": []
+  },
+
+  "message": {
+    "dataFormat": "avro_confluent",
+    "fields": [
+      { "name": "transmission_id",   "type": "VARCHAR" },
+      { "name": "device_id",         "type": "INTEGER" },
+      { "name": "patient_id",        "type": "VARCHAR" },
+      { "name": "created_at",        "type": "BIGINT" },
+      { "name": "daily_steps",       "type": "INTEGER" },
+      { "name": "SpO2",              "type": "INTEGER" },
+      { "name": "sleep_hours",       "type": "DOUBLE" },
+      { "name": "deep_sleep_hours",  "type": "DOUBLE" },
+      { "name": "calories_burned",   "type": "DOUBLE" },
+      { "name": "standing_hours",    "type": "DOUBLE" },
+      { "name": "run_distance",      "type": "DOUBLE" },
+      { "name": "stress_level",      "type": "INTEGER" },
+      { "name": "heart_rate",        "type": "INTEGER" }
+    ]
+  }
+
+}
