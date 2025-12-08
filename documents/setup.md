@@ -16,3 +16,5 @@ docker network create -d bridge bdfp-net
 ```bash
 docker-compose up -d
 ```
+
+![alt text](assets/big-data-fabric-platform-architecture.png)
