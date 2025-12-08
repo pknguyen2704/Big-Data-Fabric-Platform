@@ -26,20 +26,86 @@ SMART_BAND_SCHEMA = {
     "namespace": "com.example.smart_band",
     "type": "record",
     "name": "SmartBandData",
+    "doc": "Dữ liệu theo dõi sức khỏe từ vòng đeo tay thông minh, bao gồm vận động, giấc ngủ, chỉ số sinh tồn và thông tin thiết bị.",
+
     "fields": [
-        {"name": "transmission_id", "type": "string"},           # ID gói tin
-        {"name": "device_id", "type": ["null", "int"], "default": None},
-        {"name": "patient_id", "type": ["null", "string"], "default": None}, # Đổi sang string
-        {"name": "created_at", "type": ["null", "long"], "default": None},
-        {"name": "daily_steps", "type": ["null", "int"], "default": None},
-        {"name": "SpO2", "type": ["null", "int"], "default": None},
-        {"name": "sleep_hours", "type": ["null", "double"], "default": None},
-        {"name": "deep_sleep_hours", "type": ["null", "double"], "default": None},
-        {"name": "calories_burned", "type": ["null", "double"], "default": None},
-        {"name": "standing_hours", "type": ["null", "double"], "default": None},
-        {"name": "run_distance", "type": ["null", "double"], "default": None},
-        {"name": "stress_level", "type": ["null", "int"], "default": None},
-        {"name": "heart_rate", "type": ["null", "int"], "default": None}
+        {
+            "name": "transmission_id",
+            "type": "string",
+            "doc": "Mã định danh duy nhất cho mỗi gói dữ liệu được gửi."
+        },
+        {
+            "name": "device_id",
+            "type": ["null", "int"],
+            "default": None,
+            "doc": "ID thiết bị smart band (định danh phần cứng)."
+        },
+        {
+            "name": "patient_id",
+            "type": ["null", "string"],
+            "default": None,
+            "doc": "Mã bệnh nhân tương ứng với thiết bị."
+        },
+        {
+            "name": "created_at",
+            "type": ["null", "long"],
+            "default": None,
+            "doc": "Thời điểm ghi nhận dữ liệu (epoch milliseconds)."
+        },
+        {
+            "name": "daily_steps",
+            "type": ["null", "int"],
+            "default": None,
+            "doc": "Số bước chân người dùng đi trong ngày."
+        },
+        {
+            "name": "SpO2",
+            "type": ["null", "int"],
+            "default": None,
+            "doc": "Chỉ số bão hòa oxy trong máu (%)."
+        },
+        {
+            "name": "sleep_hours",
+            "type": ["null", "double"],
+            "default": None,
+            "doc": "Tổng số giờ ngủ trong ngày."
+        },
+        {
+            "name": "deep_sleep_hours",
+            "type": ["null", "double"],
+            "default": None,
+            "doc": "Thời lượng ngủ sâu (giờ)."
+        },
+        {
+            "name": "calories_burned",
+            "type": ["null", "double"],
+            "default": None,
+            "doc": "Lượng calo đã tiêu thụ trong ngày."
+        },
+        {
+            "name": "standing_hours",
+            "type": ["null", "double"],
+            "default": None,
+            "doc": "Tổng số giờ người dùng đứng hoặc vận động nhẹ."
+        },
+        {
+            "name": "run_distance",
+            "type": ["null", "double"],
+            "default": None,
+            "doc": "Quãng đường chạy bộ (km)."
+        },
+        {
+            "name": "stress_level",
+            "type": ["null", "int"],
+            "default": None,
+            "doc": "Mức độ căng thẳng, từ 1 đến 3."
+        },
+        {
+            "name": "heart_rate",
+            "type": ["null", "int"],
+            "default": None,
+            "doc": "Nhịp tim (beats per minute – BPM)."
+        }
     ]
 }
 

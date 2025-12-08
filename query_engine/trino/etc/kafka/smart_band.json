@@ -3,6 +3,8 @@
   "schemaName": "public",
   "topicName": "smart_band",
 
+  "doc": "Bảng mô phỏng dữ liệu sức khỏe thời gian thực được gửi từ thiết bị vòng đeo tay thông minh (Smart Band). Dữ liệu bao gồm bước chân, giấc ngủ, nhịp tim, mức độ căng thẳng và một số chỉ số sinh tồn khác.",
+
   "key": {
     "dataFormat": "raw",
     "fields": []
@@ -11,20 +13,71 @@
   "message": {
     "dataFormat": "avro_confluent",
     "fields": [
-      { "name": "transmission_id",   "type": "VARCHAR" },
-      { "name": "device_id",         "type": "INTEGER" },
-      { "name": "patient_id",        "type": "VARCHAR" },
-      { "name": "created_at",        "type": "BIGINT" },
-      { "name": "daily_steps",       "type": "INTEGER" },
-      { "name": "SpO2",              "type": "INTEGER" },
-      { "name": "sleep_hours",       "type": "DOUBLE" },
-      { "name": "deep_sleep_hours",  "type": "DOUBLE" },
-      { "name": "calories_burned",   "type": "DOUBLE" },
-      { "name": "standing_hours",    "type": "DOUBLE" },
-      { "name": "run_distance",      "type": "DOUBLE" },
-      { "name": "stress_level",      "type": "INTEGER" },
-      { "name": "heart_rate",        "type": "INTEGER" }
+      {
+        "name": "transmission_id",
+        "type": "VARCHAR",
+        "doc": "Mã định danh duy nhất cho mỗi gói dữ liệu truyền từ thiết bị (UUID)."
+      },
+      {
+        "name": "device_id",
+        "type": "INTEGER",
+        "doc": "ID thiết bị smart band (định danh phần cứng)."
+      },
+      {
+        "name": "patient_id",
+        "type": "VARCHAR",
+        "doc": "Mã bệnh nhân gắn với thiết bị."
+      },
+      {
+        "name": "created_at",
+        "type": "BIGINT",
+        "doc": "Thời điểm ghi nhận dữ liệu, dạng epoch milliseconds."
+      },
+      {
+        "name": "daily_steps",
+        "type": "INTEGER",
+        "doc": "Tổng số bước chân người dùng đi từ đầu ngày."
+      },
+      {
+        "name": "SpO2",
+        "type": "INTEGER",
+        "doc": "Chỉ số bão hòa oxy trong máu (%)."
+      },
+      {
+        "name": "sleep_hours",
+        "type": "DOUBLE",
+        "doc": "Tổng giờ ngủ tính từ đầu ngày."
+      },
+      {
+        "name": "deep_sleep_hours",
+        "type": "DOUBLE",
+        "doc": "Thời lượng ngủ sâu trong ngày."
+      },
+      {
+        "name": "calories_burned",
+        "type": "DOUBLE",
+        "doc": "Tổng calo đã tiêu thụ trong ngày."
+      },
+      {
+        "name": "standing_hours",
+        "type": "DOUBLE",
+        "doc": "Tổng số giờ đứng hoặc vận động nhẹ."
+      },
+      {
+        "name": "run_distance",
+        "type": "DOUBLE",
+        "doc": "Tổng quãng đường chạy trong ngày (km)."
+      },
+      {
+        "name": "stress_level",
+        "type": "INTEGER",
+        "doc": "Mức độ căng thẳng (1 = thấp, 2 = trung bình, 3 = cao)."
+      },
+      {
+        "name": "heart_rate",
+        "type": "INTEGER",
+        "doc": "Nhịp tim tại thời điểm đo (bpm)."
+      }
     ]
   }
-
 }
