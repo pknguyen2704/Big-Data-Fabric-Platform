@@ -1,4 +1,7 @@
 numpy
 pandas
+pymongo
+certifi
 kafka-python
+python-dotenv
 confluent-kafka[avro]
