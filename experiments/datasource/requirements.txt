@@ -2,6 +2,7 @@ numpy
 pandas
 pymongo
 certifi
+faker
 kafka-python
 python-dotenv
 confluent-kafka[avro]

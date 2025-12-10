@@ -3,67 +3,147 @@ import time
 import csv
 import os
 import sys
-import urllib.parse  
+import urllib.parse
 from datetime import datetime, timedelta
 
 # Import thư viện load env
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 
 import pymongo
 from pymongo import MongoClient
+from pymongo.errors import CollectionInvalid
 import certifi
 
 # Import logic sinh dữ liệu
-from behavior_logs_gen import DailyBehaviorSimulator, apply_noise, SCHEMA_DESCRIPTION
+from behavior_logs_gen import DailyBehaviorSimulator, apply_noise
+
+# ========================================
+# 1. Định nghĩa MongoDB JSON Schema (Validator)
+# ========================================
+# Đây là phần dịch từ SCHEMA_DESCRIPTION sang ngôn ngữ mà MongoDB hiểu ($jsonSchema)
+VALIDATOR_SCHEMA = {
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["patient_ID", "date"], # Các trường bắt buộc phải có
+        "title": "Daily Behavior Logs",
+        "description": "Dữ liệu nhật ký sức khỏe tổng hợp theo ngày của bệnh nhân.",
+        "properties": {
+            "_id": {
+                "bsonType": "objectId",
+                "description": "Định danh duy nhất của bản ghi."
+            },
+            "patient_ID": {
+                "bsonType": "string",
+                "description": "Mã định danh bệnh nhân."
+            },
+            "date": {
+                "bsonType": "date",
+                "description": "Ngày ghi nhận nhật ký (YYYY-MM-DD)."
+            },
+            "diet": {
+                "bsonType": "object",
+                "description": "Thông tin dinh dưỡng trong ngày.",
+                "properties": {
+                    "Breakfast": {"bsonType": "string"},
+                    "Lunch": {"bsonType": "string"},
+                    "Dinner": {"bsonType": "string"},
+                    "Snack": {"bsonType": "string"},
+                    "Total_calories": {"bsonType": "int", "minimum": 0}
+                }
+            },
+            "exercise": {
+                "bsonType": "object",
+                "description": "Thông tin vận động/tập luyện.",
+                "properties": {
+                    "Type": {"bsonType": "string"},
+                    "Duration_hours": {"bsonType": "double"}, # Python float -> Mongo double
+                    "Intensity": {"bsonType": "string"},
+                    "Calories_burned": {"bsonType": "double"}
+                }
+            },
+            "mood": {
+                "bsonType": ["string", "null"], # Cho phép string hoặc null (nếu tạo nhiễu)
+                "description": "Tâm trạng chủ đạo trong ngày."
+            },
+            "water_intake_ml": {
+                "bsonType": ["int", "null"],
+                "description": "Lượng nước uống (ml)."
+            },
+            "context": {
+                "bsonType": "object",
+                "description": "Bối cảnh môi trường.",
+                "properties": {
+                    "Weather": {"bsonType": "string"},
+                    "Location": {"bsonType": "string"},
+                    "Special_events": {"bsonType": "string"}
+                }
+            }
+        }
+    }
+}
 
 # ========================================
 # CẤU HÌNH MÔI TRƯỜNG
 # ========================================
-# 1. Load file .env
 load_dotenv()
-
-# 2. Lấy thông tin từ biến môi trường
 M_USER = os.getenv("MONGO_USER")
 M_PASS = os.getenv("MONGO_PASSWORD")
 M_CLUSTER = os.getenv("MONGO_CLUSTER")
-M_DB_NAME = os.getenv("MONGO_DB_NAME", "medical_lake") # Mặc định là medical_lake nếu không có trong env
+M_DB_NAME = os.getenv("MONGO_DB_NAME", "medical_lake")
 
-# 3. Tạo URI kết nối an toàn (Xử lý ký tự đặc biệt trong pass)
 if not M_USER or not M_PASS or not M_CLUSTER:
     print("❌ LỖI: Thiếu thông tin cấu hình trong file .env")
-    print("👉 Hãy tạo file .env chứa: MONGO_USER, MONGO_PASSWORD, MONGO_CLUSTER")
     sys.exit(1)
 
-# Mã hóa username và password để tránh lỗi URL
 safe_user = urllib.parse.quote_plus(M_USER)
 safe_pass = urllib.parse.quote_plus(M_PASS)
-
-# Tạo connection string chuẩn
 DEFAULT_MONGO_URI = f"mongodb+srv://{safe_user}:{safe_pass}@{M_CLUSTER}/?appName=cluster0"
 
 COLLECTION_NAME = "daily_behavior_logs"
-META_COLLECTION = "_schema_metadata"
 
 # ========================================
-# HÀM KẾT NỐI VÀ GỬI
+# HÀM KẾT NỐI & CẤU HÌNH SCHEMA
 # ========================================
-def get_mongo_collection(uri, db_name, col_name):
+def setup_database_and_schema(uri, db_name, col_name):
     print(f"🔌 Đang kết nối tới Cluster: {M_CLUSTER}...")
-    
-    # Sử dụng certifi.where() để lấy đường dẫn chứng chỉ SSL chuẩn
     client = MongoClient(uri, tlsCAFile=certifi.where())
     
-    # Kiểm tra kết nối thử
     try:
         client.admin.command('ping')
-        print("✅ Kết nối & Xác thực MongoDB thành công!")
+        print("✅ Kết nối MongoDB thành công!")
     except Exception as e:
-        print(f"❌ Kết nối MongoDB thất bại: {e}")
-        print("👉 Gợi ý: Kiểm tra lại Username/Password trong file .env hoặc IP Whitelist.")
+        print(f"❌ Kết nối thất bại: {e}")
         sys.exit(1)
         
     db = client[db_name]
-    return db[col_name], db[META_COLLECTION]
+    
+    # --- CẬP NHẬT SCHEMA VALIDATOR ---
+    print(f"⚙️  Đang cấu hình Schema Validator cho '{col_name}'...")
+    
+    # Kiểm tra xem collection đã tồn tại chưa
+    col_names = db.list_collection_names()
+    
+    if col_name not in col_names:
+        # 1. Nếu chưa có, tạo mới kèm validator
+        try:
+            db.create_collection(col_name, validator=VALIDATOR_SCHEMA)
+            print("✅ Đã tạo collection mới với Schema Validation.")
+        except Exception as e:
+            print(f"⚠️ Lỗi tạo collection: {e}")
+    else:
+        # 2. Nếu đã có, dùng lệnh 'collMod' để cập nhật validator
+        try:
+            command = {
+                "collMod": col_name,
+                "validator": VALIDATOR_SCHEMA,
+                "validationLevel": "moderate" # Cảnh báo nếu sai schema nhưng vẫn cho ghi (hoặc 'strict' để chặn)
+            }
+            db.command(command)
+            print("✅ Đã cập nhật Schema Validation vào collection hiện tại.")
+        except Exception as e:
+            print(f"⚠️ Không thể cập nhật Schema (có thể do quyền user): {e}")
+
+    return db[col_name]
 
 def load_patient_ids_from_csv(file_path):
     pids = []
@@ -83,31 +163,25 @@ def load_patient_ids_from_csv(file_path):
 # LOGIC CHẠY BATCH (Ngày)
 # ========================================
 def process_day_batch(collection, simulator, patient_ids, current_date, dirty_rate, delay=None):
-    """
-    Sinh và gửi dữ liệu của TẤT CẢ bệnh nhân trong 1 ngày cụ thể.
-    """
     batch_data = []
     print(f"⏳ Đang sinh dữ liệu cho ngày: {current_date.date()}...")
     
     for pid in patient_ids:
-        # 1. Sinh dữ liệu thô
         record = simulator.generate_record(pid, current_date)
-        
-        # 2. Tạo nhiễu (nếu có)
         final_record = apply_noise(record, dirty_rate)
-        
         batch_data.append(final_record)
-        
-        # (Optional) Realtime delay giả lập từng người gửi
-        if delay:
-            time.sleep(delay)
+        if delay: time.sleep(delay)
 
-    # 3. Gửi Bulk Insert vào MongoDB (Hiệu năng cao hơn insert từng dòng)
     if batch_data:
         try:
-            result = collection.insert_many(batch_data)
-            print(f"✅ [MongoDB] Đã insert {len(result.inserted_ids)} bản ghi ngày {current_date.date()}.")
+            # ordered=False để nếu 1 record lỗi (sai schema) thì các record khác vẫn chạy
+            result = collection.insert_many(batch_data, ordered=False)
+            print(f"✅ [MongoDB] Insert thành công {len(result.inserted_ids)} bản ghi.")
             return len(result.inserted_ids)
+        except pymongo.errors.BulkWriteError as bwe:
+            # Bắt lỗi nếu dữ liệu vi phạm schema (nếu validationLevel là strict)
+            print(f"⚠️ Một số bản ghi bị từ chối do lỗi Schema hoặc trùng lặp: {bwe.details['nInserted']} đã insert.")
+            return bwe.details['nInserted']
         except Exception as e:
             print(f"❌ Lỗi insert MongoDB: {e}")
             return 0
@@ -136,10 +210,9 @@ def run_realtime_mode(collection, simulator, patient_ids, target_date, dirty_rat
             print(f"   -> Sent log for Patient: {pid}")
             count += 1
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"❌ Error (Có thể do sai Schema): {e}")
         
-        if delay:
-            time.sleep(delay)
+        if delay: time.sleep(delay)
             
     print(f"\n🎉 [REALTIME DONE] Đã gửi {count} bản ghi.")
 
@@ -153,31 +226,19 @@ if __name__ == "__main__":
     parser.add_argument("--start", type=str, help="YYYY-MM-DD (History mode)")
     parser.add_argument("--end", type=str, help="YYYY-MM-DD (History mode)")
     parser.add_argument("--date", type=str, help="YYYY-MM-DD (Realtime mode)")
-    parser.add_argument("--delay", type=float, default=0.1, help="Delay giữa các records (giây)")
+    parser.add_argument("--delay", type=float, default=0.1, help="Delay (s)")
     parser.add_argument("--dirty_rate", type=float, default=0.0)
     
-    # Cho phép override URI từ command line, nếu không có thì dùng từ .env
-    parser.add_argument("--uri", type=str, default=DEFAULT_MONGO_URI, help="MongoDB connection URI (optional)")
+    parser.add_argument("--uri", type=str, default=DEFAULT_MONGO_URI)
     parser.add_argument("--db", type=str, default=M_DB_NAME)
     parser.add_argument("--collection", type=str, default=COLLECTION_NAME)
 
     args = parser.parse_args()
     
-    # 1. Kết nối Mongo
-    data_col, meta_col = get_mongo_collection(args.uri, args.db, args.collection)
+    # 1. Kết nối & Cài đặt Schema
+    data_col = setup_database_and_schema(args.uri, args.db, args.collection)
     
-    # 2. Gửi Metadata
-    print("ℹ️  Đang cập nhật Schema Metadata vào MongoDB...")
-    try:
-        meta_col.replace_one(
-            {"collection_name": args.collection}, 
-            SCHEMA_DESCRIPTION, 
-            upsert=True
-        )
-    except Exception as e:
-        print(f"⚠️ Không thể update metadata (có thể do lỗi mạng hoặc quyền), bỏ qua. Chi tiết: {e}")
-
-    # 3. Load Patients & Simulator
+    # 2. Load Patients & Simulator
     try:
         pids = load_patient_ids_from_csv(args.patient_file)
         print(f"👥 Tìm thấy {len(pids)} bệnh nhân.")
@@ -187,7 +248,7 @@ if __name__ == "__main__":
 
     simulator = DailyBehaviorSimulator()
 
-    # 4. Run Modes
+    # 3. Run Modes
     if args.mode == "history":
         if not args.start or not args.end:
             print("❌ Mode history cần --start và --end")
