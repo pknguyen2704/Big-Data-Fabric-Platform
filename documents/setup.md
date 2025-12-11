@@ -5,7 +5,7 @@
 - Docker
 - Git
 
-#install docker on vm
+# install docker on vm
 
 sudo apt update
 
@@ -19,9 +19,9 @@ sudo apt update
 
 sudo apt install docker-ce
 
-#create network in docker
+# create network in docker
 
-sudo docker network create dfp-net --driver bridge
+sudo docker network create bdfp-net --driver bridge
 
 
 # Fix cac bug ve quyen/ user

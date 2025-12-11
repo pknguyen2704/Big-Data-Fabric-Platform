@@ -13,10 +13,6 @@ CREATE TABLE visits (
     
     -- Cột này không có trong CSV, nhưng nên giữ để quản lý DB
     updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    -- Ràng buộc dữ liệu cho sạch
-    CONSTRAINT check_visit_type CHECK (visit_type IN ('Định kỳ', 'Tự phát', 'Cấp cứu', 'Tái khám')),
-    CONSTRAINT check_inpatient CHECK (inpatient IN ('Có', 'Không'))
 );
 
 -- 4. Thêm Comment (Documentation)
@@ -43,7 +39,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_patient_visits
+CREATE TRIGGER trigger_update_visits
 BEFORE UPDATE ON visits
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();

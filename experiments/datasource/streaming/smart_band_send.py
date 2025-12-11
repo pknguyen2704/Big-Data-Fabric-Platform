@@ -174,7 +174,6 @@ def send_batch(simulator, timestamp, dirty_rate, excluded_fields, delay=None):
     producer.flush()
     return count
 
-# ... (Giữ nguyên run_history_mode và run_realtime_mode) ...
 def run_history_mode(simulator, start_date, end_date, interval_minutes, dirty_rate, excluded_fields):
     print(f"\n⏳ [HISTORY] Gửi dữ liệu từ {start_date.date()} đến {end_date.date()}...\n")
     timestamp = start_date
