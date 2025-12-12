@@ -1,7 +1,7 @@
 connector.name=snowflake
 connection-url=jdbc:snowflake://yxftrmw-jq29696.snowflakecomputing.com
 connection-user=pknguyen2704
-connection-password=hay dien mat khau
+connection-password=Pknguyen2704snowflake@
 snowflake.account=yxftrmw-jq29696
 snowflake.database=PATIENTS
 snowflake.warehouse=COMPUTE_WH

@@ -19,6 +19,7 @@ sudo apt update
 
 sudo apt install docker-ce
 
+
 # create network in docker
 
 sudo docker network create bdfp-net --driver bridge
@@ -35,7 +36,7 @@ ds-postgres: 54321
 nifi: 8443
 kafka:
 hdfs: 9870
-airflow: 8089
+airflow: 8080
 trino: 8085
 openmetadata: 8585
 superset: 8088
