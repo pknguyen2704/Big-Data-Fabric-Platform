@@ -1,0 +1,78 @@
+sources:
+  - name: mongodb
+    database: mongodb
+    schema: medical_lake
+    tables:
+      - name: daily_behavior_logs
+
+models:
+  # =========================================================
+  # DAILY BEHAVIOR LOGS (MongoDB -> Silver)
+  # =========================================================
+  - name: daily_behavior_logs
+    description: >
+      Daily lifestyle behavior data of patients, cleaned and standardized
+      from MongoDB for analytical usage (Silver layer).
+
+    columns:
+      - name: patient_id
+        description: Patient identifier
+        tests:
+          - not_null
+
+      - name: behavior_date
+        description: Date of the behavior record
+        tests:
+          - not_null
+
+      - name: breakfast
+        description: Breakfast information (free text)
+
+      - name: lunch
+        description: Lunch information (free text)
+
+      - name: dinner
+        description: Dinner information (free text)
+
+      - name: snack
+        description: Snack information (free text)
+
+      - name: total_calories
+        description: Total calories consumed in a day
+
+      - name: exercise_type
+        description: Type of physical exercise
+
+      - name: exercise_duration_hours
+        description: Duration of exercise in hours
+
+      - name: exercise_intensity
+        description: Exercise intensity level
+        tests:
+          - accepted_values:
+              values: ['nhẹ', 'vừa', 'nặng']
+              quote: true
+
+      - name: calories_burned
+        description: Calories burned during exercise
+
+      - name: sleep_hours
+        description: Total sleep duration in hours
+
+      - name: sleep_quality
+        description: Sleep quality description
+
+      - name: mood
+        description: Overall mood of the day
+
+      - name: water_intake_ml
+        description: Water intake amount in milliliters
+        
+      - name: weather
+        description: Weather condition of the day (free text)
+
+      - name: location
+        description: Location or place context of the day
+
+      - name: special_events
+        description: Special events occurred during the day

@@ -1,0 +1,73 @@
+sources:
+  - name: kafka
+    database: kafka
+    schema: public
+    tables:
+      - name: smart_band
+
+models:
+# =========================================================
+  # SMART BAND DAILY METRICS (Kafka -> Silver)
+  # =========================================================
+
+  - name: smart_band
+    description: >
+      Strictly cleaned daily metrics from smart wearable devices.
+      Records with missing or invalid critical metrics are excluded.
+      This table is safe for BI and KPI dashboards.
+
+    columns:
+      - name: device_id
+        description: Smart band device identifier
+        tests:
+          - not_null
+
+      - name: activity_date
+        description: Activity date derived from event timestamp
+        tests:
+          - not_null
+
+      - name: spo2
+        description: Blood oxygen saturation percentage
+        tests:
+          - not_null
+
+      - name: deep_sleep_hours
+        description: Deep sleep duration in hours
+        tests:
+          - not_null
+
+      - name: standing_hours
+        description: Total standing hours
+        tests:
+          - not_null
+
+      - name: stress_level
+        description: Stress level indicator (1=low, 2=medium, 3=high)
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3]
+              quote: false
+
+      - name: heart_rate
+        description: Average heart rate in beats per minute
+        tests:
+          - not_null
+
+      # ===== OPTIONAL / NON-CRITICAL METRICS =====
+
+      - name: daily_steps
+        description: Total steps recorded in a day
+
+      - name: sleep_hours
+        description: Total sleep hours
+
+      - name: calories_burned
+        description: Calories burned in a day
+
+      - name: run_distance
+        description: Total running distance in kilometers
+
+      - name: created_at
+        description: Event timestamp

@@ -1,0 +1,65 @@
+version: 2
+
+sources:
+  - name: mysql
+    description: MySQL source containing clinical health records
+    database: mysql
+    schema: patients
+
+    tables:
+      - name: health_records
+        description: >
+          Clinical test results and health measurements per patient and visit.
+          This source is considered clean and can be joined directly in Gold.
+
+        columns:
+          - name: test_id
+            description: Primary key of the test record
+            tests:
+              - not_null
+
+          - name: visit_id
+            description: Visit identifier
+            tests:
+              - not_null
+
+          - name: patient_id
+            description: Patient identifier
+            tests:
+              - not_null
+
+          - name: test_code
+            description: Code of the medical test
+
+          - name: test_name
+            description: Name of the medical test
+
+          - name: test_result
+            description: Result of the medical test
+
+          - name: test_unit
+            description: Unit of the test result
+
+          - name: reference_range
+            description: Reference range for the test
+
+          - name: abnormal_flag
+            description: Indicator whether the result is abnormal
+
+          - name: test_date
+            description: Date and time of the test
+
+          - name: height
+            description: Height of the patient (cm)
+
+          - name: weight
+            description: Weight of the patient (kg)
+
+          - name: bmi
+            description: Body Mass Index
+
+          - name: blood_type
+            description: Blood type of the patient
+
+          - name: comorbidities_snapshot
+            description: Snapshot of patient comorbidities (comma-separated)

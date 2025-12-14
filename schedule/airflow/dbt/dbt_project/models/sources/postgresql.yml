@@ -1,0 +1,48 @@
+version: 2
+
+sources:
+  - name: postgresql
+    description: PostgreSQL source containing patient visit records
+    database: postgresql
+    schema: public
+
+    tables:
+      - name: visits
+        description: >
+          Administrative records of patient visits.
+          This source is clean and used directly for visit analytics and Gold joins.
+
+        columns:
+          - name: visit_id
+            description: Primary key of visit
+            tests:
+              - not_null
+
+          - name: patient_id
+            description: Patient identifier
+            tests:
+              - not_null
+
+          - name: visit_date
+            description: Date and time of the visit
+
+          - name: doctor_name
+            description: Name of the doctor
+
+          - name: visit_type
+            description: Type of visit (periodic, emergency, etc.)
+
+          - name: visit_reason
+            description: Reason for the visit
+
+          - name: impatient
+            description: Indicates inpatient or outpatient visit
+
+          - name: department
+            description: Department where the visit occurred
+
+          - name: created_at
+            description: Record creation timestamp
+
+          - name: updated_at
+            description: Record update timestamp

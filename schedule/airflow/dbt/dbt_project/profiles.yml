@@ -1,0 +1,12 @@
+dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      method: none
+      user: admin
+      host: trino
+      port: 8080
+      catalog: iceberg
+      schema: silver
+      threads: 4

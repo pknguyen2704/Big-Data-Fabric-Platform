@@ -1,0 +1,61 @@
+version: 2
+
+sources:
+  - name: snowflake
+    description: Snowflake source containing patient demographic information
+    database: snowflake
+    schema: public
+
+    tables:
+      - name: info
+        description: >
+          Master patient demographic information.
+          This table acts as the main patient dimension for analytics and Gold models.
+
+        columns:
+          - name: patient_id
+            description: Primary key of patient
+            tests:
+              - not_null
+
+          - name: fullname
+            description: Full name of the patient
+
+          - name: age
+            description: Age of the patient
+
+          - name: gender
+            description: Gender of the patient
+
+          - name: dob
+            description: Date of birth
+
+          - name: ethnicity
+            description: Ethnicity of the patient
+
+          - name: ward
+            description: Ward of residence
+
+          - name: district
+            description: District of residence
+
+          - name: city
+            description: City of residence
+
+          - name: address
+            description: Detailed address
+
+          - name: phone_number
+            description: Contact phone number
+
+          - name: health_insurance_id
+            description: Health insurance identifier
+
+          - name: job
+            description: Occupation
+
+          - name: created_at
+            description: Record creation timestamp
+
+          - name: updated_at
+            description: Record update timestamp
