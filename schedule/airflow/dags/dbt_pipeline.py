@@ -1,6 +1,6 @@
 from datetime import datetime
 from cosmos import DbtDag, ProjectConfig, ProfileConfig
-
+from airflow.operators.bash import BashOperator
 # -----------------------------
 # Đường dẫn project dbt
 # -----------------------------
@@ -46,5 +46,13 @@ dbt_pipeline = DbtDag(
     #     "bronze.*",
     #     "silver_*",
     #     "gold_*",
-    # ],
+    # ],  
+)
+
+dbt_debug = BashOperator(
+    task_id="dbt_debug_comorbidity",
+    bash_command="""
+    cd /opt/airflow/dbt/dbt_project &&
+    dbt run --select comorbidity_distribution --debug
+    """,
 )

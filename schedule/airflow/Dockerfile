@@ -1,4 +1,4 @@
-FROM apache/airflow:3.1.4
+FROM apache/airflow:2.11.0
 
 RUN pip install --no-cache-dir \
     astronomer-cosmos \

@@ -4,233 +4,214 @@
 **Project:** UILDING A BIG DATA PLATFORM FOR DISTRIBUTED DATA INTEGRATION USING DATA FABRIC 
 
 ---
+---
+## 🎯 Mục tiêu hệ thống (Project Objectives)
 
-## 1. Prerequisites (Yêu cầu tiền quyết)
+Dự án **Big-Data-Fabric-Platform** nhằm xây dựng một nền tảng Big Data hoàn chỉnh dựa trên kiến trúc **Data Fabric**, tập trung giải quyết các bài toán:
 
-Hệ thống được xây dựng dựa trên kiến trúc **Microservices** và chạy hoàn toàn trên **Docker**.  
-Do đặc thù của các nền tảng Big Data (Hadoop, Trino, OpenMetadata), hệ thống yêu cầu tài nguyên phần cứng tương đối lớn.
-
-### 1.1 Hardware Requirements (Cấu hình phần cứng)
-
-Để đảm bảo toàn bộ stack hoạt động ổn định, máy tính triển khai cần đáp ứng:
-
-- **RAM:**  
-  - Tối thiểu **16GB**  
-  - Khuyến nghị **24GB RAM** (theo môi trường thực nghiệm của nhóm)
-- **CPU:** Tối thiểu **4 vCPUs**
-- **Disk Space:** Trống ít nhất **50GB**
-
-### Software Requirements
-
-- **Docker Engine:** `>= 20.10.0`
-- **Docker Compose:** `>= 1.29.0`
-- **Git**
+* Tích hợp dữ liệu **phân tán – dị thể – đa định dạng** (structured, semi-structured, streaming)
+* Truy cập dữ liệu **logic thống nhất** mà không cần di chuyển vật lý (zero / minimal copy)
+* Quản trị dữ liệu xuyên suốt vòng đời thông qua **Active Metadata & Lineage**
+* Tự động hóa pipeline dữ liệu theo hướng **DataOps**
+* Hỗ trợ phân tích, BI và mở rộng cho AI/ML
 
 ---
 
-## 2. Installation & Deployment (Cài đặt & Triển khai)
+## 🧠 Tổng quan kiến trúc Data Fabric trong dự án
 
-Thực hiện theo các bước sau để khởi động toàn bộ nền tảng.
+![alt text](assets/big-data-fabric-platform-architecture.png)
+Hệ thống được xây dựng theo mô hình **Storage – Compute – Governance tách rời**, trong đó:
 
-### Bước 1: Clone mã nguồn
+* **Storage Layer**
+  → HDFS + Iceberg (Data Lakehouse)
 
-```bash
-git clone https://github.com/pknguyen2704/Big-Data-Fabric-Platform.git
-cd Big-Data-Fabric-Platform
-```
+* **Ingestion Layer**
+  → Apache NiFi (Batch + Streaming)
 
-### Bước 2: Cấu hình môi trường
+* **Transformation Layer**
+  → dbt + Trino (ELT, Medallion Architecture)
 
-Trước khi chạy, cần thiết lập các biến môi trường và thông tin đăng nhập.
+* **Query & Virtualization Layer**
+  → Trino (Federated SQL Engine)
 
-Sao chép file mẫu:
+* **Orchestration Layer**
+  → Apache Airflow (Workflow as Code)
 
-```bash
-cp .env.example .env
-```
+* **Governance & Metadata Layer**
+  → OpenMetadata (Active Metadata, Lineage, Data Quality)
 
-### Bước 3: Khởi động hệ thống
+* **Analytics Layer**
+  → Apache Superset (Self-service BI)
 
-Để tránh quá tải tài nguyên khi khởi động đồng thời, **khuyến khích khởi động theo thứ tự**.
+Kiến trúc này cho phép:
 
-#### Option A: Khởi động toàn bộ (Cho máy mạnh)
-
-```bash
-docker-compose up -d
-```
-
-⏳ Thời gian chờ khởi động hoàn tất: **10–15 phút**
-
-#### Option B: Khởi động từng phần (Khuyến nghị)
-
-```bash
-# 1. Storage & Metadata Layer
-docker-compose up -d database namenode datanode hive-metastore
-
-# 2. Processing & Ingestion Layer
-docker-compose up -d nifi trino-coordinator
-
-# 3. Governance & Orchestration Layer
-docker-compose up -d openmetadata-server airflow-webserver
-```
+* Dữ liệu **ở yên tại nguồn**
+* Logic xử lý và truy vấn được **ảo hóa**
+* Metadata trở thành **trung tâm điều phối thông minh**
 
 ---
 
-## 3. Access Information (Thông tin truy cập)
+## 🔄 Luồng xử lý dữ liệu tổng quát (End-to-End Flow)
 
-Sau khi hệ thống khởi động thành công, các dịch vụ có thể truy cập qua trình duyệt:
-
-| Service         | Role          | URL                                                      | Default User | Default Password      |
-| --------------- | ------------- | -------------------------------------------------------- | ------------ | --------------------- |
-| Apache NiFi     | Ingestion     | [http://localhost:8443/nifi](http://localhost:8443/nifi) | admin        | *(trong file `.env`)* |
-| Apache Airflow  | Orchestration | [http://localhost:8080](http://localhost:8080)           | airflow      | airflow               |
-| OpenMetadata    | Governance    | [http://localhost:8585](http://localhost:8585)           | admin        | admin                 |
-| Apache Superset | Visualization | [http://localhost:8088](http://localhost:8088)           | admin        | admin                 |
-| MinIO Console   | S3 Storage UI | [http://localhost:9001](http://localhost:9001)           | minioadmin   | minioadmin            |
-| Trino UI        | Query Monitor | [http://localhost:8090](http://localhost:8090)           | admin        | *(No password)*       |
-
-> **Lưu ý:**
-> Nếu chưa truy cập được, vui lòng:
->
-> * Đợi thêm vài phút để các service Java khởi động hoàn tất, hoặc
-> * Kiểm tra log:
->
-> ```bash
-> docker-compose logs -f [service_name]
-> ```
-
----
-
-## 4. Reproducibility Guide (Hướng dẫn tái lập kết quả)
-
-Để tái hiện các kết quả thực nghiệm trong **Báo cáo – Mục 4 (Experiments 2)**, thực hiện theo các kịch bản sau.
-
----
-
-### Kịch bản 1: Ingestion & Data Generation (Sinh dữ liệu giả lập)
-
-Dữ liệu đầu vào là **Synthetic Data** mô phỏng bệnh nhân.
-
-1. Truy cập **Apache NiFi**:
-   [https://localhost:8443/nifi](https://localhost:8443/nifi)
-2. Tìm **Process Group** có tên **`Data Generator`**
-3. Chuột phải → chọn **Start**
-4. Kiểm tra dữ liệu đã được đẩy vào Kafka qua topic:
-
-   ```
-   kafka.public.smart_band
-   ```
-
----
-
-### Kịch bản 2: Transformation Pipeline (Làm sạch & Chuẩn hóa)
-
-Chạy pipeline ETL để chuyển dữ liệu từ **Bronze → Silver → Gold**.
-
-1. Truy cập **Apache Airflow**:
-   [http://localhost:8080](http://localhost:8080)
-2. Kích hoạt DAG:
-
-   ```
-   dbt_transformation_pipeline
-   ```
-3. DAG sẽ:
-
-   * Làm sạch dữ liệu từ Kafka / MongoDB
-   * Lưu trữ dữ liệu dưới dạng **Apache Iceberg** trên HDFS / MinIO
-   * Tạo các bảng phân tích tại lớp **Gold**
-
----
-
-### Kịch bản 3: Data Governance & Lineage (Quản trị dữ liệu)
-
-Kiểm tra **Active Metadata** và **Data Lineage**.
-
-1. Truy cập **OpenMetadata**:
-   [http://localhost:8585](http://localhost:8585)
-2. Vào mục **Pipelines**, chọn pipeline vừa chạy
-3. Chọn tab **Lineage** để xem luồng dữ liệu:
-
-   ```
-   Kafka / MongoDB → Silver Iceberg → Gold Tables
-   ```
-4. Vào mục **Data Quality** để xem các test cases tự động:
-
-   * Kiểm tra null
-   * Schema drift
-   * Data freshness
-
----
-
-### Kịch bản 4: Visualization (Trực quan hóa)
-
-1. Truy cập **Apache Superset**:
-   [http://localhost:8088](http://localhost:8088)
-2. Vào **Dashboards**
-3. Chọn dashboard:
-
-   ```
-   Health Monitoring Dashboard
-   ```
-
-Dashboard hiển thị các biểu đồ phân tích dựa trên dữ liệu đã được xử lý.
-
----
-
-## 5. Project Structure (Cấu trúc dự án)
-
-```bash
-Big-Data-Fabric-Platform/
-├── airflow/                # Mã nguồn & cấu hình Apache Airflow (DAGs)
-├── dbt_project/            # Các model biến đổi dữ liệu (dbt models)
-├── nifi_templates/         # File template XML/JSON cho luồng NiFi
-├── docker/                 # Các file Dockerfile tùy chỉnh
-├── data_generator/         # Script Python sinh dữ liệu giả lập [QUAN TRỌNG]
-├── documentation/          # Tài liệu thiết kế & Báo cáo PDF
-├── docker-compose.yaml     # File triển khai chính
-└── README.md               # Tài liệu này
+```text
+[Data Sources]
+   ├── Structured (MySQL, PostgreSQL, CSV)
+   ├── Streaming (Kafka)
+   └── Semi/Unstructured (MongoDB)
+        ↓
+[Apache NiFi]
+        ↓
+[HDFS + Iceberg (Bronze / Silver)]
+        ↓
+[dbt + Trino]
+        ↓
+[Iceberg Gold Layer]
+        ↓
+[Superset / BI / Analytics]
+        ↓
+[OpenMetadata: Lineage + Quality + Governance]
 ```
 
 ---
 
-## 6. Troubleshooting (Xử lý lỗi thường gặp)
+## 📁 Giải thích chi tiết cấu trúc thư mục
 
-### ❌ Lỗi: `No space left on device` hoặc container tự tắt
+### `analysis/`
 
-**Nguyên nhân:**
+Chứa các công cụ phục vụ **khai thác & phân tích dữ liệu**:
 
-* Thiếu RAM hoặc ổ cứng
-
-**Khắc phục:**
-
-* Tăng tài nguyên cho Docker: `Preferences → Resources`
-* Dọn dẹp Docker:
-
-```bash
-docker system prune
-```
+* `jupiter/` – Notebook phân tích thử nghiệm
+* `superset/` – Cấu hình, metadata và truy vấn BI
 
 ---
 
-### ❌ Lỗi kết nối giữa Superset và Trino
+### `documents/`
 
-**Khắc phục:**
-
-* Đảm bảo container **Trino** ở trạng thái `healthy` trước khi truy vấn từ Superset
-
----
-
-## Contact
-
-**Team 08**
-📧 Email: *[Email liên hệ của trưởng nhóm]*
+* `assets/` – Hình ảnh kiến trúc, sơ đồ hệ thống
+* `setup.md` – **Tài liệu quan trọng** hướng dẫn khởi động hệ thống theo thứ tự
+* `open-metadata.md` – Hướng dẫn cấu hình OpenMetadata
 
 ---
 
-```
+### `experiments/datasource/`
 
-Nếu bạn muốn, mình có thể:
-- Chuẩn hóa README theo **chuẩn học thuật / hội đồng chấm đồ án**
-- Viết thêm phần **Architecture Diagram**, **Tech Stack**, hoặc **Abstract**
-- Việt hóa / Anh hóa song ngữ cho README
-```
+Chứa **dữ liệu giả lập (synthetic data)** mô phỏng hệ thống bệnh viện:
+
+* `structured/` – CSV, relational data
+* `streaming/` – dữ liệu mô phỏng streaming
+* `unstructured/` – dữ liệu bán cấu trúc
+* `patients_seed_last_5000.csv` – dữ liệu mẫu bệnh nhân
+
+👉 Phục vụ cho việc **test pipeline ingestion & transformation**
+
+---
+
+### `ingestion/nifi/`
+
+* Dockerfile & template cho Apache NiFi
+* Các flow ingest dữ liệu:
+
+  * Batch
+  * Streaming
+  * File-based
+
+👉 Đây là **cửa ngõ dữ liệu đầu vào của toàn hệ thống**
+
+---
+
+### `storage/`
+
+* `hdfs/` – HDFS cluster (Data Lake)
+* `hive_metastore/` – Metadata store cho Iceberg & Trino
+
+👉 Đóng vai trò **nền tảng lưu trữ vật lý**
+
+---
+
+### `query_engine/trino/`
+
+* Cấu hình Trino
+* Hadoop config
+* Connector cho Iceberg, Hive, Kafka
+
+👉 Thực hiện:
+
+* Federated Query
+* Data Virtualization
+* SQL thống nhất cho toàn bộ hệ sinh thái
+
+---
+
+### `schedule/`
+
+* Cấu hình Apache Airflow
+* DAG điều phối:
+
+  * Ingestion
+  * Transformation
+  * Data Quality Check
+  * Metadata ingestion
+
+---
+
+### `governance/openmetadata/`
+
+* Docker Compose cho OpenMetadata
+* Metadata Agents
+* Lineage, Quality, Classification
+
+
+---
+
+## Hướng dẫn sử dụng cơ bản (Quick Start)
+
+### 1. Khởi động hệ thống theo thứ tự
+
+**Bắt buộc đọc:** `documents/setup.md`
+
+Thứ tự khuyến nghị:
+
+1. Storage (HDFS + Hive Metastore)
+2. Trino
+3. NiFi
+4. Airflow
+5. OpenMetadata
+6. Superset
+
+---
+
+### 2. Xử lý & biến đổi dữ liệu
+
+* dbt model chạy thông qua Airflow
+* Dữ liệu được chuẩn hóa theo:
+
+  * Bronze
+  * Silver
+  * Gold
+
+---
+
+### 3. Khám phá metadata & lineage
+
+* Truy cập OpenMetadata
+* Theo dõi:
+
+  * Data Lineage
+  * Data Quality
+  * Ownership
+  * PII Classification
+
+---
+
+### 5️⃣ Phân tích & BI
+
+* Superset kết nối trực tiếp Trino
+* Dashboard sử dụng bảng `iceberg.gold.*`
+
+---
+
+## 👥 Team & Contact
+
+**Team 08 – HotTopic25**
+📧 Email: **[pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com)**
+🎓 University of Engineering and Technology – VNU

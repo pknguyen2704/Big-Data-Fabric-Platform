@@ -529,7 +529,7 @@ services:
     expose:
       - 8080
     ports:
-      - "8089:8080"
+      - "8080:8080"
     networks:
       - bdfp-net
     volumes:
