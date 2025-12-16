@@ -22,25 +22,25 @@ Dự án **Big-Data-Fabric-Platform** nhằm xây dựng một nền tảng Big 
 Hệ thống được xây dựng theo mô hình **Storage – Compute – Governance tách rời**, trong đó:
 
 * **Storage Layer**
-  → HDFS + Iceberg (Data Lakehouse) được xử dụng để lưu trữ các dữ liệu cần được xử lý
+  → HDFS + Iceberg (Data Lakehouse)
 
 * **Ingestion Layer**
-  → Apache NiFi (Batch + Streaming) chủ động thu thập các nguồn dữ liệu
+  → Apache NiFi (Batch + Streaming)
 
 * **Transformation Layer**
-  → dbt + Trino (ELT, Medallion Architecture) biến đổi dữ liệu
+  → dbt + Trino (ELT, Medallion Architecture)
 
 * **Query & Virtualization Layer**
-  → Trino (Federated SQL Engine) query engine 
+  → Trino (Federated SQL Engine)
 
 * **Orchestration Layer**
-  → Apache Airflow (Workflow as Code) sử dụng để schedule, lập lịch, quản lý
+  → Apache Airflow (Workflow as Code)
 
 * **Governance & Metadata Layer**
-  → OpenMetadata (Active Metadata, Lineage, Data Quality) quản trị dữ liệu
+  → OpenMetadata (Active Metadata, Lineage, Data Quality)
 
 * **Analytics Layer**
-  → Apache Superset (Self-service BI) biểu đồ báo cáo phân tích
+  → Apache Superset (Self-service BI)
 
 Kiến trúc này cho phép:
 
@@ -123,5 +123,9 @@ Thứ tự khuyến nghị:
 ## Team & Contact
 
 **Team 08 – HotTopic25**
-* Email: **[pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com)**
-* University of Engineering and Technology – VNU
+*Đại học Công nghệ - Đại học Quốc gia Hà Nội (UET-VNU)*
+
+| Thành viên | Vai trò | Liên hệ |
+| :--- | :--- | :--- |
+| **Nguyễn P.K** | Lead / Data Architect | [pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com) |
+| [Tên thành viên khác] | [Vai trò] | [Email] |
