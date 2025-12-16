@@ -11,7 +11,7 @@ services:
       - bdfp-net
 
   kafka:
-    image:  /cp-kafka:7.9.5
+    image:  confluentinc/cp-kafka:7.9.5
     hostname: kafka
     container_name: kafka
     ports:
