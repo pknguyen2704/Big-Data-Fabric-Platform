@@ -4,8 +4,7 @@
 **Project:** UILDING A BIG DATA PLATFORM FOR DISTRIBUTED DATA INTEGRATION USING DATA FABRIC 
 
 ---
----
-## 🎯 Mục tiêu hệ thống (Project Objectives)
+## Mục tiêu hệ thống 
 
 Dự án **Big-Data-Fabric-Platform** nhằm xây dựng một nền tảng Big Data hoàn chỉnh dựa trên kiến trúc **Data Fabric**, tập trung giải quyết các bài toán:
 
@@ -17,31 +16,31 @@ Dự án **Big-Data-Fabric-Platform** nhằm xây dựng một nền tảng Big 
 
 ---
 
-## 🧠 Tổng quan kiến trúc Data Fabric trong dự án
+## Tổng quan kiến trúc
 
-![alt text](assets/big-data-fabric-platform-architecture.png)
+![alt text](documents/assets/big-data-fabric-platform-architecture.png)
 Hệ thống được xây dựng theo mô hình **Storage – Compute – Governance tách rời**, trong đó:
 
 * **Storage Layer**
-  → HDFS + Iceberg (Data Lakehouse)
+  → HDFS + Iceberg (Data Lakehouse) được xử dụng để lưu trữ các dữ liệu cần được xử lý
 
 * **Ingestion Layer**
-  → Apache NiFi (Batch + Streaming)
+  → Apache NiFi (Batch + Streaming) chủ động thu thập các nguồn dữ liệu
 
 * **Transformation Layer**
-  → dbt + Trino (ELT, Medallion Architecture)
+  → dbt + Trino (ELT, Medallion Architecture) biến đổi dữ liệu
 
 * **Query & Virtualization Layer**
-  → Trino (Federated SQL Engine)
+  → Trino (Federated SQL Engine) query engine 
 
 * **Orchestration Layer**
-  → Apache Airflow (Workflow as Code)
+  → Apache Airflow (Workflow as Code) sử dụng để schedule, lập lịch, quản lý
 
 * **Governance & Metadata Layer**
-  → OpenMetadata (Active Metadata, Lineage, Data Quality)
+  → OpenMetadata (Active Metadata, Lineage, Data Quality) quản trị dữ liệu
 
 * **Analytics Layer**
-  → Apache Superset (Self-service BI)
+  → Apache Superset (Self-service BI) biểu đồ báo cáo phân tích
 
 Kiến trúc này cho phép:
 
@@ -51,7 +50,7 @@ Kiến trúc này cho phép:
 
 ---
 
-## 🔄 Luồng xử lý dữ liệu tổng quát (End-to-End Flow)
+## Luồng xử lý dữ liệu tổng quát (End-to-End Flow)
 
 ```text
 [Data Sources]
@@ -74,98 +73,9 @@ Kiến trúc này cho phép:
 
 ---
 
-## 📁 Giải thích chi tiết cấu trúc thư mục
+## Hướng dẫn sử dụng cơ bản
 
-### `analysis/`
-
-Chứa các công cụ phục vụ **khai thác & phân tích dữ liệu**:
-
-* `jupiter/` – Notebook phân tích thử nghiệm
-* `superset/` – Cấu hình, metadata và truy vấn BI
-
----
-
-### `documents/`
-
-* `assets/` – Hình ảnh kiến trúc, sơ đồ hệ thống
-* `setup.md` – **Tài liệu quan trọng** hướng dẫn khởi động hệ thống theo thứ tự
-* `open-metadata.md` – Hướng dẫn cấu hình OpenMetadata
-
----
-
-### `experiments/datasource/`
-
-Chứa **dữ liệu giả lập (synthetic data)** mô phỏng hệ thống bệnh viện:
-
-* `structured/` – CSV, relational data
-* `streaming/` – dữ liệu mô phỏng streaming
-* `unstructured/` – dữ liệu bán cấu trúc
-* `patients_seed_last_5000.csv` – dữ liệu mẫu bệnh nhân
-
-👉 Phục vụ cho việc **test pipeline ingestion & transformation**
-
----
-
-### `ingestion/nifi/`
-
-* Dockerfile & template cho Apache NiFi
-* Các flow ingest dữ liệu:
-
-  * Batch
-  * Streaming
-  * File-based
-
-👉 Đây là **cửa ngõ dữ liệu đầu vào của toàn hệ thống**
-
----
-
-### `storage/`
-
-* `hdfs/` – HDFS cluster (Data Lake)
-* `hive_metastore/` – Metadata store cho Iceberg & Trino
-
-👉 Đóng vai trò **nền tảng lưu trữ vật lý**
-
----
-
-### `query_engine/trino/`
-
-* Cấu hình Trino
-* Hadoop config
-* Connector cho Iceberg, Hive, Kafka
-
-👉 Thực hiện:
-
-* Federated Query
-* Data Virtualization
-* SQL thống nhất cho toàn bộ hệ sinh thái
-
----
-
-### `schedule/`
-
-* Cấu hình Apache Airflow
-* DAG điều phối:
-
-  * Ingestion
-  * Transformation
-  * Data Quality Check
-  * Metadata ingestion
-
----
-
-### `governance/openmetadata/`
-
-* Docker Compose cho OpenMetadata
-* Metadata Agents
-* Lineage, Quality, Classification
-
-
----
-
-## Hướng dẫn sử dụng cơ bản (Quick Start)
-
-### 1. Khởi động hệ thống theo thứ tự
+### 1. Khởi động hệ thống 
 
 **Bắt buộc đọc:** `documents/setup.md`
 
@@ -203,15 +113,15 @@ Thứ tự khuyến nghị:
 
 ---
 
-### 5️⃣ Phân tích & BI
+### 4. Phân tích & BI
 
 * Superset kết nối trực tiếp Trino
 * Dashboard sử dụng bảng `iceberg.gold.*`
 
 ---
 
-## 👥 Team & Contact
+## Team & Contact
 
 **Team 08 – HotTopic25**
-📧 Email: **[pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com)**
-🎓 University of Engineering and Technology – VNU
+* Email: **[pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com)**
+* University of Engineering and Technology – VNU
