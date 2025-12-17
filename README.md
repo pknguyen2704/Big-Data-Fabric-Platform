@@ -122,10 +122,13 @@ Thứ tự khuyến nghị:
 
 ## Team & Contact
 
-**Team 08 – HotTopic25**
+## 👥 Team 08 – HotTopic25
 *Đại học Công nghệ - Đại học Quốc gia Hà Nội (UET-VNU)*
 
 | Thành viên | Vai trò | Liên hệ |
 | :--- | :--- | :--- |
-| **Nguyễn P.K** | Lead / Data Architect | [pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com) |
-| [Tên thành viên khác] | [Vai trò] | [Email] |
+| **Khoi Nguyen Phung** | Lead / Data Architect | [pknguyen2704@gmail.com](mailto:pknguyen2704@gmail.com) |
+| **Duy Anh Nguyen** | Member | [ngdoanh2004@gmail.com](mailto:ngdoanh2004@gmail.com) |
+| **Dinh Hoan Hoang** | Member | [hoandinh040904@gmail.com](mailto:hoandinh040904@gmail.com) |
+| **Duc Huy Nguyen** | Member | [huydux2174@gmail.com](mailto:huydux2174@gmail.com) |
+| **Quy Lan Luu** | Member | [lanpy2014@gmail.com](mailto:lanpy2014@gmail.com) |

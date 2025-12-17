@@ -4,13 +4,6 @@
 
 Để đánh giá tính khả thi và hiệu năng của **nền tảng Big Data Fabric** được đề xuất, nghiên cứu đã xây dựng một môi trường thực nghiệm thống nhất trên hạ tầng điện toán đám mây. Hệ thống được triển khai trên một **máy ảo (Virtual Machine – VM)** thuộc **Google Cloud Platform (GCP)**, đóng vai trò là node xử lý trung tâm, nơi vận hành toàn bộ các thành phần của hệ sinh thái dữ liệu.
 
-### Cấu hình phần cứng
-
-* **Nền tảng:** Google Cloud Platform (Compute Engine)
-* **CPU:** 4 vCPU (8 luồng xử lý), hỗ trợ xử lý song song và các tác vụ phân tán
-* **Bộ nhớ:** 24 GB RAM, đáp ứng yêu cầu của các dịch vụ dựa trên Java như Apache Trino
-* **Lưu trữ:** 100 GB SSD, sử dụng cho HDFS DataNode và metadata hệ thống
-
 ### Triển khai phần mềm
 
 Chiến lược **container hóa (containerization)** được áp dụng nhằm đảm bảo tính nhất quán môi trường và khả năng tái lập (reproducibility). Toàn bộ các thành phần mã nguồn mở (Apache NiFi, Trino, Iceberg, OpenMetadata, v.v.) đều được đóng gói và vận hành dưới dạng **Docker containers**. Việc điều phối container được thực hiện bằng **Docker Compose**, cho phép quản lý tập trung mạng nội bộ và biến môi trường.
