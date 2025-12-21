@@ -50,29 +50,6 @@ Kiến trúc này cho phép:
 
 ---
 
-## Luồng xử lý dữ liệu tổng quát (End-to-End Flow)
-
-```text
-[Data Sources]
-   ├── Structured (MySQL, PostgreSQL, CSV)
-   ├── Streaming (Kafka)
-   └── Semi/Unstructured (MongoDB)
-        ↓
-[Apache NiFi]
-        ↓
-[HDFS + Iceberg (Bronze / Silver)]
-        ↓
-[dbt + Trino]
-        ↓
-[Iceberg Gold Layer]
-        ↓
-[Superset / BI / Analytics]
-        ↓
-[OpenMetadata: Lineage + Quality + Governance]
-```
-
----
-
 ## Hướng dẫn sử dụng cơ bản
 
 ### 1. Khởi động hệ thống 
